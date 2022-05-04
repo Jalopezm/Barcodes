@@ -7,16 +7,35 @@
 //     https://www.free-barcode-generator.net/code-11/
 //     https://products.aspose.app/barcode/generate
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Code11 {
 
     // Codifica un String amb Code11
     static String encode(String s) {
         String bar = "█";
         String space = " ";
-        for (int i = 0; i < s.length(); i++) {
+        String resultado = "";
+        HashMap<Character, String> map = new HashMap<>();
 
-        }
-        return "";
+        //Mapa con las posibles convinaciones
+        map.put('0', "00001");
+        map.put('1', "10001");
+        map.put('2', "01001");
+        map.put('3', "11000");
+        map.put('4', "00101");
+        map.put('5', "10100");
+        map.put('6', "01100");
+        map.put('7', "00011");
+        map.put('8', "10010");
+        map.put('9', "10000");
+        map.put('-', "00100");
+        map.put('*', "00110");
+
+        //
+
+        return resultado;
     }
 
     // Decodifica amb Code11
