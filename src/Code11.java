@@ -8,7 +8,6 @@
 //     https://products.aspose.app/barcode/generate
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class Code11 {
 
@@ -17,6 +16,7 @@ public class Code11 {
         String bar = "█";
         String space = " ";
         String resultado = "";
+        String stringBin = "";
         HashMap<Character, String> map = new HashMap<>();
 
         //Mapa con las posibles convinaciones
@@ -32,14 +32,50 @@ public class Code11 {
         map.put('9', "10000");
         map.put('-', "00100");
         map.put('*', "00110");
-
-        //
+        //Encode
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            stringBin += map.get(c);
+        }
+        for (int i = 0; i < stringBin.length(); i++) {
+            if (i < stringBin.length() - 1) {
+                if (i % 2 != 0) {
+                    if (stringBin.charAt(i) == '0') {
+                        resultado += space;
+                    } else {
+                        resultado += space + space;
+                    }
+                } else {
+                    if (stringBin.charAt(i) == '0') {
+                        resultado += bar;
+                    } else {
+                        resultado += bar + bar;
+                    }
+                }
+            }
+        }
 
         return resultado;
     }
 
     // Decodifica amb Code11
     static String decode(String s) {
+        //Decode
+        for (int i = 0; i < s.length(); i++) {
+            if (i % 2 == 0) {
+                if (s.charAt(i) == 0) {
+
+                } else {
+
+                }
+            } else {
+                if (s.charAt(i) == 0) {
+
+                } else {
+
+                }
+            }
+        }
         return "";
     }
 
