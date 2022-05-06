@@ -3,17 +3,14 @@
 // (powered by FernFlower decompiler)
 //
 
-import java.util.HashMap;
+import java.util.*;
 
 public class Code11 {
     public Code11() {
     }
 
     static String encode(String s) {
-        String bar = "█";
-        String space = " ";
         String resultado = "";
-        String stringBin = "";
         HashMap<Character, String> map = new HashMap();
         map.put('0', "█ █ ██ ");
         map.put('1', "██ █ ██ ");
@@ -31,31 +28,62 @@ public class Code11 {
         for (int i = 0; i < s.length(); ++i) {
             char c = s.charAt(i);
             resultado = resultado + (String) map.get(c);
-            System.out.println(resultado);
         }
-        resultado = resultado.substring(0,resultado.length()-1);
+        resultado = resultado.substring(0, resultado.length() - 1);
         return resultado;
     }
 
     static String decode(String s) {
-        char c = ' ';
-        int contador = 0;
-        int mayor = 0;
-        int menor  = 0;
-        for (int i = 0; i < s.length(); ++i) {
-            char cAntigua = c;
-            c = s.charAt(i);
+        String bar = "";
+        String space = "";
+        String resultado = "";
+        String sAux = "";
 
-            while(c == cAntigua){
-                contador++;
-            }
-            mayor = contador;
-            if (c!= cAntigua){
-                contador  = 0 ;
-            }
+        HashMap<String, String> map = new HashMap<String,String>();
+        map.put("00001", "0");
+        map.put("10001", "1");
+        map.put("01001", "2");
+        map.put("11000", "3");
+        map.put("00101", "4");
+        map.put("10100", "5");
+        map.put("01100", "6");
+        map.put("00011", "7");
+        map.put("10010", "8");
+        map.put("10000", "9");
+        map.put("00100", "-");
+        map.put("00110", "*");
+
+        s = s.trim();
+        String resultadoAux = s;
+        for (int i = 0; i < maxBarLenght(s); i++) {
+            bar += "█";
+        }
+        for (int i = 0; i < maxSpaceLenght(s); i++) {
+            space += " ";
         }
 
-        return "";
+        System.out.println(space.length());
+
+        resultadoAux = resultadoAux + " ";
+        resultadoAux = resultadoAux.replace(bar,"8");
+        resultadoAux = resultadoAux.replace(space, "/");
+        resultadoAux = resultadoAux.replaceAll("█+", "0");
+        resultadoAux = resultadoAux.replaceAll("\\s+", "0");
+        resultadoAux = resultadoAux.replace("8","1");
+        resultadoAux = resultadoAux.replace("/","1");
+
+        for (int i = 0; i < resultadoAux.length(); i++) {
+            if (sAux.length() == 5){
+                resultado = resultado + (String) map.get(sAux);
+                sAux = "";
+                continue;
+            }
+            char c = resultadoAux.charAt(i);
+            sAux = sAux + c;
+
+        }
+
+        return resultado;
     }
 
     public static String decodeImage(String str) {
@@ -65,4 +93,42 @@ public class Code11 {
     public static String generateImage(String s) {
         return "";
     }
+
+    private static int maxBarLenght(String s) {
+        char c = ' ';
+        int contador = 0;
+        int mayor = 0;
+        for (int i = 0; i < s.length(); ++i) {
+            c = s.charAt(i);
+            if (c == '█') {
+                contador++;
+            }
+            if (contador > mayor) {
+                mayor = contador;
+            }
+            if (c == ' ') {
+                contador = 0;
+            }
+        }
+        return mayor;
+    }
+    private static int maxSpaceLenght(String s) {
+        char c = ' ';
+        int contador = 0;
+        int mayor = 0;
+        for (int i = 0; i < s.length(); ++i) {
+            c = s.charAt(i);
+            if (c == ' ') {
+                contador++;
+            }
+            if (contador > mayor) {
+                mayor = contador;
+            }
+            if (c == '█') {
+                contador = 0;
+            }
+        }
+        return mayor;
+    }
+
 }
