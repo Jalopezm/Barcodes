@@ -12,54 +12,46 @@ public class Code11 {
     static String encode(String s) {
         String bar = "█";
         String space = " ";
-        String resultado = "█ ██  █ ";
+        String resultado = "";
         String stringBin = "";
         HashMap<Character, String> map = new HashMap();
-        map.put('0', "000010");
-        map.put('1', "100010");
-        map.put('2', "010010");
-        map.put('3', "110000");
-        map.put('4', "001010");
-        map.put('5', "101000");
-        map.put('6', "011000");
-        map.put('7', "000110");
-        map.put('8', "100100");
-        map.put('9', "100000");
-        map.put('-', "001000");
-        map.put('*', "00110");
+        map.put('0', "█ █ ██ ");
+        map.put('1', "██ █ ██ ");
+        map.put('2', "█  █ ██ ");
+        map.put('3', "██  █ █ ");
+        map.put('4', "█ ██ ██ ");
+        map.put('5', "██ ██ █ ");
+        map.put('6', "█  ██ █ ");
+        map.put('7', "█ █  ██ ");
+        map.put('8', "██ █  █ ");
+        map.put('9', "██ █ █ ");
+        map.put('-', "█ ██ █ ");
+        map.put('*', "█ ██  █ ");
 
         for (int i = 0; i < s.length(); ++i) {
             char c = s.charAt(i);
-            if (c == '*'){
-                continue;
-            }
-            stringBin = stringBin + (String) map.get(c);
+            resultado = resultado + (String) map.get(c);
+            System.out.println(resultado);
         }
-
-        for (int i = 0; i < stringBin.length(); ++i) {
-            if (i % 2 == 1) {
-                if (stringBin.charAt(i) == '0') {
-                    resultado = resultado + space;
-                } else {
-                    resultado = resultado + space + space;
-                }
-            } else if (stringBin.charAt(i) == '0') {
-                resultado = resultado + bar;
-            } else {
-                resultado = resultado + bar + bar;
-            }
-
-        }
-        resultado = resultado + "█ ██  █";
+        resultado = resultado.substring(0,resultado.length()-1);
         return resultado;
     }
 
     static String decode(String s) {
+        char c = ' ';
+        int contador = 0;
+        int mayor = 0;
+        int menor  = 0;
         for (int i = 0; i < s.length(); ++i) {
-            if (i % 2 == 0) {
-                if (s.charAt(i) == 0) {
-                }
-            } else if (s.charAt(i) == 0) {
+            char cAntigua = c;
+            c = s.charAt(i);
+
+            while(c == cAntigua){
+                contador++;
+            }
+            mayor = contador;
+            if (c!= cAntigua){
+                contador  = 0 ;
             }
         }
 
