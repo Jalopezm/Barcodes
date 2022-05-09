@@ -39,7 +39,7 @@ public class Code11 {
         String resultado = "";
         String sAux = "";
 
-        HashMap<String, String> map = new HashMap<String,String>();
+        HashMap<String, String> map = new HashMap<String, String>();
         map.put("00001", "0");
         map.put("10001", "1");
         map.put("01001", "2");
@@ -55,34 +55,54 @@ public class Code11 {
 
         s = s.trim();
         String resultadoAux = s;
-        for (int i = 0; i < maxBarLenght(s); i++) {
-            bar += "█";
-        }
-        for (int i = 0; i < maxSpaceLenght(s); i++) {
-            space += " ";
-        }
 
-        System.out.println(space.length());
 
-        resultadoAux = resultadoAux + " ";
-        resultadoAux = resultadoAux.replace(bar,"8");
-        resultadoAux = resultadoAux.replace(space, "/");
-        resultadoAux = resultadoAux.replaceAll("█+", "0");
-        resultadoAux = resultadoAux.replaceAll("\\s+", "0");
-        resultadoAux = resultadoAux.replace("8","1");
-        resultadoAux = resultadoAux.replace("/","1");
+        return calculoResultado(s, resultadoAux, bar, space, sAux, resultado, map);
+    }
 
-        for (int i = 0; i < resultadoAux.length(); i++) {
-            if (sAux.length() == 5){
-                resultado = resultado + (String) map.get(sAux);
-                sAux = "";
-                continue;
+    private static String calculoResultado(String s, String resultadoAux, String bar, String space, String sAux, String resultado, HashMap<String, String> map) {
+        boolean False = true;
+        int contador = 0;
+
+        while (False) {
+            for (int i = 0; i < maxBarLenght(s); i++) {
+                bar += "█";
             }
-            char c = resultadoAux.charAt(i);
-            sAux = sAux + c;
+            for (int i = 0; i < maxSpaceLenght(s); i++) {
+                space += " ";
+            }
+            if (contador > 0){
+                String greySpaces = space.substring(0, space.length() - contador);
+                resultadoAux = resultadoAux.replace(greySpaces, "/");
 
+            }
+            resultadoAux = resultadoAux + " ";
+            resultadoAux = resultadoAux.replace(bar, "8");
+            resultadoAux = resultadoAux.replace(space, "/");
+            resultadoAux = resultadoAux.replaceAll("█+", "0");
+            resultadoAux = resultadoAux.replaceAll("\\s+", "0");
+            resultadoAux = resultadoAux.replace("8", "1");
+            resultadoAux = resultadoAux.replace("/", "1");
+
+            for (int i = 0; i < resultadoAux.length(); i++) {
+                if (sAux.length() == 5) {
+                    resultado = resultado + (String) map.get(sAux);
+                    sAux = "";
+                    continue;
+                }
+                char c = resultadoAux.charAt(i);
+                sAux = sAux + c;
+            }
+            if (resultado.charAt(0) == '*') {
+                False = false;
+            } else {
+                contador++;
+                bar = "";
+                space = "";
+                resultadoAux = s;
+                resultado = "";
+            }
         }
-
         return resultado;
     }
 
@@ -112,6 +132,7 @@ public class Code11 {
         }
         return mayor;
     }
+
     private static int maxSpaceLenght(String s) {
         char c = ' ';
         int contador = 0;
