@@ -133,7 +133,12 @@ public class Code11 {
             resultadoAux = resultadoAux.replaceAll("\\s+", "0");
             resultadoAux = resultadoAux.replace("8", "1");
             resultadoAux = resultadoAux.replace("/", "1");
-
+            for (int i = 0; i < resultadoAux.length(); i++) {
+                char c = resultadoAux.charAt(i);
+                if (c != '0' && c != '1') {
+                    return null;
+                }
+            }
             for (int i = 0; i < resultadoAux.length(); i++) {
                 if (sAux.length() == 5) {
                     resultado = resultado + (String) map.get(sAux);
@@ -142,9 +147,6 @@ public class Code11 {
                 }
                 char c = resultadoAux.charAt(i);
                 sAux = sAux + c;
-                if (c != ' ' || c != '█') {
-                    return null;
-                }
             }
             if (resultado.charAt(0) == '*') {
                 False = false;
