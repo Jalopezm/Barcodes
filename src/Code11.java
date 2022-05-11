@@ -61,7 +61,30 @@ public class Code11 {
     }
 
     public static String decodeImage(String str) {
+        String img = UtilTests.getImageAsString("code11_0123452.ppm");
+        String [] numeros = img.split("\n");
+        int anchoNum = 0;
+        int altoNum = 0;
 
+        String s = numeros[2];
+        String nn[] = s.split("\s");
+
+        anchoNum = Integer.parseInt(nn[0]);
+        altoNum = Integer.parseInt(nn[1]);
+        String codeActual = "";
+        String code = "";
+        String[] barCode = new String[anchoNum];
+        for (int i = 4; i < anchoNum; i++) {
+            for (int j = 0; j < 3; j++) {
+                codeActual += numeros[i] + "/";
+            }
+            if (codeActual.length()%3 == 0){
+                code=codeActual;
+                codeActual = "";
+                barCode[i-4] = code;
+            }
+        }
+        System.out.println(Arrays.toString(barCode));
         return "";
     }
 
@@ -126,6 +149,14 @@ public class Code11 {
                 resultadoAux = resultadoAux.replace(greySpaces, "/");
 
             }
+
+            for (int i = 0; i < s.length(); i++) {
+                char c = s.charAt(i);
+                if (c != ' ' && c != '█') {
+                    return null;
+                }
+            }
+
             resultadoAux = resultadoAux + " ";
             resultadoAux = resultadoAux.replace(bar, "8");
             resultadoAux = resultadoAux.replace(space, "/");
@@ -133,12 +164,7 @@ public class Code11 {
             resultadoAux = resultadoAux.replaceAll("\\s+", "0");
             resultadoAux = resultadoAux.replace("8", "1");
             resultadoAux = resultadoAux.replace("/", "1");
-            for (int i = 0; i < resultadoAux.length(); i++) {
-                char c = resultadoAux.charAt(i);
-                if (c != '0' && c != '1') {
-                    return null;
-                }
-            }
+
             for (int i = 0; i < resultadoAux.length(); i++) {
                 if (sAux.length() == 5) {
                     resultado = resultado + (String) map.get(sAux);
