@@ -61,7 +61,8 @@ public class Code11 {
     }
 
     public static String decodeImage(String str) {
-        String img = UtilTests.getImageAsString("code11_0123452.ppm");
+        String img = str;
+        int pos = 0;
         String[] numeros = img.split("\n");
         int anchoNum = 0;
         int altoNum = 0;
@@ -70,39 +71,40 @@ public class Code11 {
         String sAnchoAlto;
         if (!numeros[1].contains("#")) {
             sAnchoAlto = numeros[1];
+            pos = 3;
         } else {
             sAnchoAlto = numeros[2];
+            pos = 4;
         }
 
         String anchoAlto[] = sAnchoAlto.split("\s");
 
-        anchoNum = Integer.parseInt(anchoAlto[0]);
+        anchoNum = Integer.parseInt(anchoAlto[0])*3;
         altoNum = Integer.parseInt(anchoAlto[1]);
 
         String codeActual = "";
         String code = "";
         String[] barCode = new String[anchoNum];
-        for (int i = 4; i < anchoNum; i++) {
+        for (int i = pos; i < anchoNum;) {
             for (int j = 0; j < 3; j++) {
                 codeActual += numeros[i] + "/";
+                i++;
             }
             if (codeActual.length() % 3 == 0) {
                 code = codeActual;
                 codeActual = "";
-                barCode[i - 4] = code;
+                barCode[i-pos] = code;
             }
         }
-        fromNumbertoBarCode(barCode, anchoNum);
-        System.out.println(Arrays.toString(barCode));
-        return "";
+        return decode(fromNumbertoBarCode(barCode, anchoNum));
     }
 
-    private static void fromNumbertoBarCode(String[] barCode, int anchoNum) {
+    private static String fromNumbertoBarCode(String[] barCode, int anchoNum) {
         int suma = 0;
         int contador = 0;
         String numero = "";
         for (int i = 0; i < anchoNum; i++) {
-            if (barCode[i] == null) {
+            if (barCode[i] == null) {int pos = 0;
                 continue;
             }
             for (int j = 0; j < anchoNum; j++) {
@@ -122,12 +124,22 @@ public class Code11 {
 
             }
             int media = suma / 3;
+            suma = 0;
             if (media <= 127.5) {
                 barCode[i] = barCode[i].replaceAll("([0-9]+/)+", "█");
             } else {
                 barCode[i] = barCode[i].replaceAll("([0-9]+/)+", " ");
             }
         }
+        String code = "";
+        for (int i = 0; i < barCode.length; i++) {
+            String c = barCode[i];
+            if (c == null){
+                continue;
+            }
+            code += c;
+        }
+        return code;
 
     }
 
