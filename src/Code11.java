@@ -79,13 +79,13 @@ public class Code11 {
 
         String anchoAlto[] = sAnchoAlto.split("\s");
 
-        anchoNum = Integer.parseInt(anchoAlto[0])*3;
+        anchoNum = Integer.parseInt(anchoAlto[0]) * 3;
         altoNum = Integer.parseInt(anchoAlto[1]);
 
         String codeActual = "";
         String code = "";
         String[] barCode = new String[anchoNum];
-        for (int i = pos; i < anchoNum;) {
+        for (int i = pos; i < anchoNum; ) {
             for (int j = 0; j < 3; j++) {
                 codeActual += numeros[i] + "/";
                 i++;
@@ -93,7 +93,7 @@ public class Code11 {
             if (codeActual.length() % 3 == 0) {
                 code = codeActual;
                 codeActual = "";
-                barCode[i-pos] = code;
+                barCode[i - pos] = code;
             }
         }
         return decode(fromNumbertoBarCode(barCode, anchoNum));
@@ -104,7 +104,8 @@ public class Code11 {
         int contador = 0;
         String numero = "";
         for (int i = 0; i < anchoNum; i++) {
-            if (barCode[i] == null) {int pos = 0;
+            if (barCode[i] == null) {
+                int pos = 0;
                 continue;
             }
             for (int j = 0; j < anchoNum; j++) {
@@ -125,20 +126,21 @@ public class Code11 {
             }
             int media = suma / 3;
             suma = 0;
-            if (media <= 127.5) {
-                barCode[i] = barCode[i].replaceAll("([0-9]+/)+", "█");
-            } else {
+            if (media >= 100) {
                 barCode[i] = barCode[i].replaceAll("([0-9]+/)+", " ");
+            } else {
+                barCode[i] = barCode[i].replaceAll("([0-9]+/)+", "█");
             }
         }
         String code = "";
         for (int i = 0; i < barCode.length; i++) {
             String c = barCode[i];
-            if (c == null){
+            if (c == null) {
                 continue;
             }
             code += c;
         }
+        System.out.println(code);
         return code;
 
     }
@@ -220,18 +222,23 @@ public class Code11 {
             resultadoAux = resultadoAux.replace("8", "1");
             resultadoAux = resultadoAux.replace("/", "1");
 
+            System.out.println(resultadoAux);
             for (int i = 0; i < resultadoAux.length(); i++) {
                 if (sAux.length() == 5) {
+                    System.out.println("saux " + sAux);
                     resultado = resultado + (String) map.get(sAux);
+                    System.out.println(resultado);
                     sAux = "";
                     continue;
                 }
                 char c = resultadoAux.charAt(i);
                 sAux = sAux + c;
             }
-            if (resultado.charAt(0) == '*') {
+            if (resultado.charAt(0) == '*' ) {
                 False = false;
             } else {
+                System.out.println(resultado);
+                System.out.println("resultado-aux.lenght " + resultadoAux.length());
                 contador++;
                 bar = "";
                 space = "";
