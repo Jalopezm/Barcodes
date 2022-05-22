@@ -62,6 +62,7 @@ public class Code11 {
 
     public static String decodeImage(String str) {
         String img = str;
+        img = img.replace("\r", "");
         int pos = 0;
         String[] numeros = img.split("\n");
         int anchoNum = 0;
@@ -199,7 +200,7 @@ public class Code11 {
                 space += " ";
             }
             if (contador > 0) {
-                if (contador >= space.length() - 1) {
+                if (contador >= space.length()) {
                     return null;
                 }
                 String greySpaces = space.substring(0, space.length() - contador);
@@ -234,7 +235,7 @@ public class Code11 {
                 char c = resultadoAux.charAt(i);
                 sAux = sAux + c;
             }
-            if (resultado.charAt(0) == '*' ) {
+            if (resultado.charAt(0) == '*') {
                 False = false;
             } else {
                 System.out.println(resultado);

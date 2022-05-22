@@ -25,7 +25,6 @@ public class Code11Test {
     public void decodeTest2() {
         assertEquals("*0*", Code11.decode("█ ███   █ █ █ ███ █ ███   █"));
         assertEquals("*0*", Code11.decode("██ ███   █ █ █ ███ █ ███   █"));
-
         assertEquals("*0*", Code11.decode("███   █████     ███   ███   ███   █████   ███   █████     ███"));
         assertEquals("*0*", Code11.decode("███████       ██████████           ███████       ███████       ███████       ██████████       ███████       ██████████            ███████"));
     }
@@ -39,7 +38,7 @@ public class Code11Test {
 
     @Test
     public void imageTest() {
-//        assertEquals("*0123452*", Code11.decodeImage(UtilTests.getImageAsString("code11_0123452.ppm")));
+        assertEquals("*0123452*", Code11.decodeImage(UtilTests.getImageAsString("code11_0123452.ppm")));
         assertEquals("*0123-4567*", Code11.decodeImage(UtilTests.getImageAsString("code11_0123-4567.ppm")));
         assertEquals("*7867865835409892-654423523452341109-564*", Code11.decodeImage(UtilTests.getImageAsString("code11_buf.ppm")));
         assertEquals("*6675-981-743*", Code11.decodeImage(UtilTests.getImageAsString("code11_6675-981-743.ppm")));
