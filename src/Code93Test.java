@@ -5,12 +5,12 @@ import static org.junit.Assert.*;
 public class Code93Test {
     @Test
     public void encodeTest1() {
-//        assertEquals("█ █ ████ ██ █ █   ██ █ █   ██  █ ██ █ █ ████ █",
-//                Code93.encode("*A*"));
-//        assertEquals("█ █ ████ █ ██  █  ██  █  █ █ █ ██   █ █ ██   █  █ ██  █  ███ █ ██ ██ █  █ █ ████ █",
-//                Code93.encode("*HELLO*"));
-//        assertEquals("█ █ ████ ██ █ █   ██ █  █  ██ ██  █ ██ █ █   ██ █   █ ██ █ █   ██  █ █  ██ █ █   ██ █  █  ██ ██  █ ██ █ █   █  █  ██ █ █   █  █ █ ████ █",
-//                Code93.encode("*ABRACADABRA*"));
+        assertEquals("█ █ ████ ██ █ █   ██ █ █   ██  █ ██ █ █ ████ █",
+                Code93.encode("*A*"));
+        assertEquals("█ █ ████ █ ██  █  ██  █  █ █ █ ██   █ █ ██   █  █ ██  █  ███ █ ██ ██ █  █ █ ████ █",
+                Code93.encode("*HELLO*"));
+        assertEquals("█ █ ████ ██ █ █   ██ █  █  ██ ██  █ ██ █ █   ██ █   █ ██ █ █   ██  █ █  ██ █ █   ██ █  █  ██ ██  █ ██ █ █   █  █  ██ █ █   █  █ █ ████ █",
+                Code93.encode("*ABRACADABRA*"));
         assertEquals("█ █ ████ █   █ █  █ █  █   █ █   █  █ █    █ █  █ █   █  █  █  █  █   █ █ █ █    █   █  █ █    █ █ █   █ █  ██ █ █   ██ █  █  ██ █   █ ██  █ █  ██  █  █ ██   █ █ █ ██ █   █ ██  █  █ ██   █ █  ██ █  █   ██ █ █ █ ██   █ █  ██  █ █   ██ █  █ ██  █   █ ██ ██ ██ █  ██ ██  █ ██ █ ██  ██ █  ██ ██  █ ██ ██  ██ █ █ ██ ██  █ ██  ██ █  ██ ██ █  ███ █ █  █ ███ ███ █ █  ███ █  █ ███  █ █ █ ██ ███ █ ███ ██ ██ █ ███ █   █ ██ █ ███ ██ █ █ ████ █",
                 Code93.encode("*01234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ-. $/+%*"));
     }

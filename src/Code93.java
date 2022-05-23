@@ -52,10 +52,10 @@ public class Code93 {
         map.put("%", "██ █ ███ ");
         map.put("/", "█ ██ ███ ");
         map.put("+", "█ ███ ██ ");
-        map.put("($)", "█  █  ██ ");
-        map.put("(%)", "███ ██ █ ");
-        map.put("(/)", "███ █ ██ ");
-        map.put("(+)", "█  ██  █ ");
+        map.put("@", "█  █  ██ ");//($)
+        map.put("¥", "███ ██ █ ");//(/)
+        map.put("¶", "███ █ ██ ");//(+)
+        map.put("ß", "█  ██  █ ");//(%)
 
         HashMap<String, Integer> mapValues = new HashMap();
         mapValues.put("0", 0);
@@ -101,17 +101,22 @@ public class Code93 {
         mapValues.put("/", 40);
         mapValues.put("+", 41);
         mapValues.put("%", 42);
-        mapValues.put("($)", 43);
-        mapValues.put("(/)", 44);
-        mapValues.put("(+)", 45);
-        mapValues.put("(%)", 46);
+        mapValues.put("@", 43);//($)
+        mapValues.put("¥", 44);//(/)
+        mapValues.put("¶", 45);//(+)
+        mapValues.put("ß", 46);//(%)
 
         int newCaracter = 0;
         String resultadoAux = str;
         int oldCaracter = 0;
         int caracter = 0;
+        int contador = 0;
+
         for (int k = 0; k < 2; k++) {
             caracter = 0;
+            oldCaracter = 0;
+            newCaracter = 0;
+            contador = 0;
             for (int i = resultadoAux.length() - 1; i < resultadoAux.length(); i--) {
                 if (i == 0) {
                     break;
@@ -120,7 +125,14 @@ public class Code93 {
                 if (c.equals("*")) {
                     continue;
                 }
-                newCaracter = i * mapValues.get(c);
+                contador++;
+                if (k == 0 && contador == 21){
+                    contador = 1;
+                }
+                if (k == 1 && contador == 16){
+                    contador = 1;
+                }
+                newCaracter = contador * mapValues.get(c);
                 oldCaracter = newCaracter;
                 caracter = caracter + oldCaracter;
             }
@@ -137,6 +149,7 @@ public class Code93 {
                 }
             }
         }
+
         for (int i = 0; i < resultadoAux.length(); ++i) {
             String c = String.valueOf(resultadoAux.charAt(i));
             if (i == 0) {
@@ -144,7 +157,7 @@ public class Code93 {
             } else {
                 map.put("*", "█ █ ████ █");//Cierre
             }
-            System.out.println(map.get(c));
+            System.out.println(c + map.get(c));
             resultado += map.get(c);
         }
         return resultado;
