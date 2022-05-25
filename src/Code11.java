@@ -3,7 +3,6 @@
 // (powered by FernFlower decompiler)
 //
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 public class Code11 {
@@ -193,11 +192,46 @@ public class Code11 {
         }
         return mayor;
     }
+    private static List arrayValores(String s) {
+        List list = new ArrayList();
+        char c = ' ';
+        int contadorBarras = 0;
+        int contadorSpacios = 0;
+        int mayor = 0;
+        for (int i = 0; i < s.length(); ++i) {
+            c = s.charAt(i);
+            if (c == '█') {
+                contadorBarras++;
+                continue;
+            }
+            if (c == ' ') {
+                contadorSpacios++;
+                continue;
+            }
+
+            if (c == ' ') {
+                if (contadorSpacios > mayor) {
+                    list.set(i, contadorSpacios);
+                }
+                contadorBarras = 0;
+            }
+            if (c == '█') {
+                if (contadorBarras > mayor) {
+                    list.set(i, contadorBarras);
+                }
+                contadorSpacios = 0;
+            }
+        }
+        return list;
+    }
 
     private static String calculoResultado(String s, String resultadoAux, String bar, String space, String sAux, String resultado, HashMap<String, String> map) {
         boolean False = true;
         int contador = 0;
-
+        String greyBars = "";
+        String greySpaces = "";
+        String spaceActual = "";
+        String barActual = "";
         while (False) {
             resultadoAux = s;
             for (int i = 0; i < maxBarLenght(s); i++) {
@@ -206,6 +240,10 @@ public class Code11 {
             for (int i = 0; i < maxSpaceLenght(s); i++) {
                 space += " ";
             }
+
+            System.out.println("Lista: "+ arrayValores(s));
+
+
             if (contador > 0) {
                 if (contador >= bar.length()) {
                     return null;
@@ -213,11 +251,11 @@ public class Code11 {
                 if (contador >= space.length()) {
                     return null;
                 }
-                String greyBars = bar.substring(0, bar.length() - contador);
-                resultadoAux = resultadoAux.replace(greyBars, "8");
+                greyBars = bar.substring(0, bar.length() - contador);
+                greySpaces = space.substring(0, space.length() - contador);
 
-                String greySpaces = space.substring(0, space.length() - contador);
-                resultadoAux = resultadoAux.replace(greySpaces, "/");
+                barActual = greyBars;
+                spaceActual = greySpaces;
 
             }
 
@@ -228,10 +266,24 @@ public class Code11 {
                 }
             }
 
-            resultadoAux = s + " ";
+            resultadoAux = s;
             System.out.println("dsadadas" + resultadoAux);
             resultadoAux = resultadoAux.replace(bar, "8");
+
+            if (barActual.length() > 0) {
+                for (int i = barActual.length(); i < bar.length(); i++) {
+                    resultadoAux = resultadoAux.replace(barActual, "8");
+                    barActual += "█";
+                }
+            }
             resultadoAux = resultadoAux.replace(space, "/");
+
+            if (spaceActual.length() > 0) {
+                for (int i = spaceActual.length(); i < space.length(); i++) {
+                    resultadoAux = resultadoAux.replace(spaceActual, "/");
+                    spaceActual += " ";
+                }
+            }
             resultadoAux = resultadoAux.replaceAll("█+", "0");
             resultadoAux = resultadoAux.replaceAll("\\s+", "0");
             resultadoAux = resultadoAux.replace("8", "1");
@@ -239,7 +291,7 @@ public class Code11 {
 
 
             System.out.println(resultadoAux);
-            for (int i = 0; i < resultadoAux.length(); i++) {
+            for (int i = 0; i <= resultadoAux.length(); i++) {
                 if (sAux.length() == 5) {
                     System.out.println("saux " + sAux);
                     resultado = resultado + (String) map.get(sAux);
@@ -247,8 +299,10 @@ public class Code11 {
                     sAux = "";
                     continue;
                 }
-                char c = resultadoAux.charAt(i);
-                sAux = sAux + c;
+                if (i < resultadoAux.length()) {
+                    char c = resultadoAux.charAt(i);
+                    sAux = sAux + c;
+                }
             }
             if (resultado.charAt(0) == '*') {
                 False = false;
