@@ -93,11 +93,10 @@ public class Code11 {
                 codeActual += numeros[i] + "/";
                 i++;
             }
-            if (codeActual.length() % 3 == 0) {
                 code = codeActual;
                 codeActual = "";
                 barCode[i - 2] = code;
-            }
+
         }
         System.out.println("String" + Arrays.toString(barCode));
         return decode(fromNumbertoBarCode(barCode, anchoNum));
@@ -139,7 +138,6 @@ public class Code11 {
         String code = "";
         for (int i = 0; i < barCode.length; i++) {
             String c = barCode[i];
-            System.out.println(i);
             if (c == null) {
                 continue;
             }
@@ -155,71 +153,43 @@ public class Code11 {
         return "";
     }
 
-    private static int maxBarLenght(String s) {
-        char c = ' ';
-        int contador = 0;
-        int mayor = 0;
-        for (int i = 0; i < s.length(); ++i) {
-            c = s.charAt(i);
-            if (c == '█') {
-                contador++;
-            }
-            if (contador > mayor) {
-                mayor = contador;
-            }
-            if (c == ' ') {
-                contador = 0;
+    private static int maxValue(List arryValores) {
+        int cActual = 0;
+        int c = 0;
+        for (int i = 0; i < arryValores.toArray().length; i++) {
+            c = (Integer) arryValores.get(i);
+            if (c > cActual) {
+                cActual = c;
             }
         }
-        return mayor;
-    }
-
-    private static int maxSpaceLenght(String s) {
-        char c = ' ';
-        int contador = 0;
-        int mayor = 0;
-        for (int i = 0; i < s.length(); ++i) {
-            c = s.charAt(i);
-            if (c == ' ') {
-                contador++;
-            }
-            if (contador > mayor) {
-                mayor = contador;
-            }
-            if (c == '█') {
-                contador = 0;
-            }
-        }
-        return mayor;
+        System.out.println("cActual " + cActual);
+        return cActual;
     }
     private static List arrayValores(String s) {
-        List list = new ArrayList();
+        List<Integer> list = new ArrayList();
         char c = ' ';
         int contadorBarras = 0;
         int contadorSpacios = 0;
         int mayor = 0;
-        for (int i = 0; i < s.length(); ++i) {
-            c = s.charAt(i);
-            if (c == '█') {
-                contadorBarras++;
-                continue;
+        s = s + " ";
+        for (int i = 0; i <= s.length(); i++) {
+            if (i < s.length()) {
+                c = s.charAt(i);
+            } else {
+                return list;
             }
             if (c == ' ') {
                 contadorSpacios++;
-                continue;
-            }
-
-            if (c == ' ') {
-                if (contadorSpacios > mayor) {
-                    list.set(i, contadorSpacios);
+                if (contadorBarras > 0) {
+                    list.add(contadorBarras);
+                    contadorBarras = 0;
                 }
-                contadorBarras = 0;
-            }
-            if (c == '█') {
-                if (contadorBarras > mayor) {
-                    list.set(i, contadorBarras);
+            } else {
+                contadorBarras++;
+                if (contadorSpacios > 0) {
+                    list.add(contadorSpacios);
+                    contadorSpacios = 0;
                 }
-                contadorSpacios = 0;
             }
         }
         return list;
@@ -227,67 +197,32 @@ public class Code11 {
 
     private static String calculoResultado(String s, String resultadoAux, String bar, String space, String sAux, String resultado, HashMap<String, String> map) {
         boolean False = true;
-        int contador = 0;
-        String greyBars = "";
-        String greySpaces = "";
-        String spaceActual = "";
-        String barActual = "";
+
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c != ' ' && c != '█') {
+                return null;
+            }
+        }
+        List lista = arrayValores(s);
+        System.out.println(s);
+        int valorMaximo = maxValue(lista);
+
         while (False) {
-            resultadoAux = s;
-            for (int i = 0; i < maxBarLenght(s); i++) {
-                bar += "█";
-            }
-            for (int i = 0; i < maxSpaceLenght(s); i++) {
-                space += " ";
-            }
+            resultadoAux = "";
+            System.out.println("Lista: " + arrayValores(s));
 
-            System.out.println("Lista: "+ arrayValores(s));
-
-
-            if (contador > 0) {
-                if (contador >= bar.length()) {
-                    return null;
-                }
-                if (contador >= space.length()) {
-                    return null;
-                }
-                greyBars = bar.substring(0, bar.length() - contador);
-                greySpaces = space.substring(0, space.length() - contador);
-
-                barActual = greyBars;
-                spaceActual = greySpaces;
-
-            }
-
-            for (int i = 0; i < s.length(); i++) {
-                char c = s.charAt(i);
-                if (c != ' ' && c != '█') {
-                    return null;
+            for (int i = 0; i < lista.toArray().length; i++) {
+                Integer c = (Integer) lista.get(i);
+                if (c >= valorMaximo) {
+                    resultadoAux += 1;
+                } else {
+                    resultadoAux += 0;
                 }
             }
-
-            resultadoAux = s;
-            System.out.println("dsadadas" + resultadoAux);
-            resultadoAux = resultadoAux.replace(bar, "8");
-
-            if (barActual.length() > 0) {
-                for (int i = barActual.length(); i < bar.length(); i++) {
-                    resultadoAux = resultadoAux.replace(barActual, "8");
-                    barActual += "█";
-                }
+            if (valorMaximo <= 1) {
+                return null;
             }
-            resultadoAux = resultadoAux.replace(space, "/");
-
-            if (spaceActual.length() > 0) {
-                for (int i = spaceActual.length(); i < space.length(); i++) {
-                    resultadoAux = resultadoAux.replace(spaceActual, "/");
-                    spaceActual += " ";
-                }
-            }
-            resultadoAux = resultadoAux.replaceAll("█+", "0");
-            resultadoAux = resultadoAux.replaceAll("\\s+", "0");
-            resultadoAux = resultadoAux.replace("8", "1");
-            resultadoAux = resultadoAux.replace("/", "1");
 
 
             System.out.println(resultadoAux);
@@ -309,10 +244,8 @@ public class Code11 {
             } else {
                 System.out.println(resultado);
                 System.out.println("resultado-aux.lenght " + resultadoAux.length());
-                contador++;
-                bar = "";
-                space = "";
                 resultado = "";
+                valorMaximo--;
             }
         }
         return resultado;
