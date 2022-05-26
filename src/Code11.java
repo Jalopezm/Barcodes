@@ -63,12 +63,12 @@ public class Code11 {
 
     public static String decodeImage(String str) {
         String img = str;
+        String resultado = "";
         img = img.replace("\r", "");
         int pos = 0;
         String[] numeros = img.split("\n");
         int anchoNum = 0;
         int altoNum = 0;
-
 
         String sAnchoAlto;
         if (!numeros[1].contains("#")) {
@@ -93,13 +93,31 @@ public class Code11 {
                 codeActual += numeros[i] + "/";
                 i++;
             }
-                code = codeActual;
-                codeActual = "";
-                barCode[i - 2] = code;
+            code = codeActual;
+            codeActual = "";
+            barCode[i] = code;
 
         }
         System.out.println("String" + Arrays.toString(barCode));
-        return decode(fromNumbertoBarCode(barCode, anchoNum));
+        resultado = decode(fromNumbertoBarCode(barCode, anchoNum));
+        if (resultado == null) {
+            codeActual = "";
+            code = "";
+            barCode = new String[anchoNum];
+
+            int anchoNumNuevo = anchoNum + anchoNum;
+            for (int i = anchoNum; i < anchoNumNuevo; ) {
+                for (int j = 0; j < 3; j++) {
+                    codeActual += numeros[i] + "/";
+                    i++;
+                }
+                code = codeActual;
+                codeActual = "";
+                barCode[i - 2] = code;
+            }
+            resultado = decode(fromNumbertoBarCode(barCode, anchoNum));
+        }
+        return resultado;
     }
 
     private static String fromNumbertoBarCode(String[] barCode, int anchoNum) {
@@ -165,6 +183,7 @@ public class Code11 {
         System.out.println("cActual " + cActual);
         return cActual;
     }
+
     private static List arrayValores(String s) {
         List<Integer> list = new ArrayList();
         char c = ' ';
