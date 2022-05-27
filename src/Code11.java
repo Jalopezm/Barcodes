@@ -58,7 +58,7 @@ public class Code11 {
         String resultadoAux = s;
 
 
-        return calculoResultado(s, resultadoAux, bar, space, sAux, resultado, map);
+        return calculoResultado(s, resultadoAux, sAux, resultado, map);
     }
 
     public static String decodeImage(String str) {
@@ -95,27 +95,34 @@ public class Code11 {
             }
             code = codeActual;
             codeActual = "";
-            barCode[i] = code;
+            barCode[i - pos] = code;
 
         }
-        System.out.println("String" + Arrays.toString(barCode));
+//        System.out.println("String" + Arrays.toString(barCode));
         resultado = decode(fromNumbertoBarCode(barCode, anchoNum));
-        if (resultado == null) {
+        int anchoNumNuevo = 0;
+        int anchoNumProv = anchoNum;
+
+        while (resultado == null) {
+            int contador = 0;
+            System.out.println("Contador: "+contador);
             codeActual = "";
             code = "";
+            anchoNumNuevo += (anchoNum);
+//            System.out.println("String" + Arrays.toString(barCode));
             barCode = new String[anchoNum];
 
-            int anchoNumNuevo = anchoNum + anchoNum;
-            for (int i = anchoNum; i < anchoNumNuevo; ) {
+            for (int i = anchoNumProv+1; i <= anchoNumNuevo;i++) {
                 for (int j = 0; j < 3; j++) {
                     codeActual += numeros[i] + "/";
-                    i++;
                 }
                 code = codeActual;
                 codeActual = "";
-                barCode[i - 2] = code;
+                barCode[contador] = code;
+                contador++;
             }
             resultado = decode(fromNumbertoBarCode(barCode, anchoNum));
+            anchoNumProv = anchoNumNuevo;
         }
         return resultado;
     }
@@ -214,7 +221,7 @@ public class Code11 {
         return list;
     }
 
-    private static String calculoResultado(String s, String resultadoAux, String bar, String space, String sAux, String resultado, HashMap<String, String> map) {
+    private static String calculoResultado(String s, String resultadoAux, String sAux, String resultado, HashMap<String, String> map) {
         boolean False = true;
 
         for (int i = 0; i < s.length(); i++) {
@@ -223,6 +230,7 @@ public class Code11 {
                 return null;
             }
         }
+
         List lista = arrayValores(s);
         System.out.println(s);
         int valorMaximo = maxValue(lista);
@@ -258,7 +266,7 @@ public class Code11 {
                     sAux = sAux + c;
                 }
             }
-            if (resultado.charAt(0) == '*') {
+            if (resultado.charAt(0) == '*' && resultado.charAt(resultado.length()-1) == '*') {
                 False = false;
             } else {
                 System.out.println(resultado);
