@@ -105,14 +105,14 @@ public class Code11 {
 
         while (resultado == null) {
             int contador = 0;
-            System.out.println("Contador: "+contador);
+            System.out.println("Contador: " + contador);
             codeActual = "";
             code = "";
-            anchoNumNuevo += (anchoNum);
+            anchoNumNuevo += anchoNum;
 //            System.out.println("String" + Arrays.toString(barCode));
             barCode = new String[anchoNum];
 
-            for (int i = anchoNumProv+1; i <= anchoNumNuevo;i++) {
+            for (int i = anchoNumProv; i < anchoNumNuevo - 1; i++) {
                 for (int j = 0; j < 3; j++) {
                     codeActual += numeros[i] + "/";
                 }
@@ -234,7 +234,7 @@ public class Code11 {
         List lista = arrayValores(s);
         System.out.println(s);
         int valorMaximo = maxValue(lista);
-
+        int valorMinimo = minValue(lista);
         while (False) {
             resultadoAux = "";
             System.out.println("Lista: " + arrayValores(s));
@@ -266,7 +266,7 @@ public class Code11 {
                     sAux = sAux + c;
                 }
             }
-            if (resultado.charAt(0) == '*' && resultado.charAt(resultado.length()-1) == '*') {
+            if ((resultado.charAt(0) == '*' && resultado.charAt(resultado.length() - 1) == '*') && !resultado.contains("null")) {
                 False = false;
             } else {
                 System.out.println(resultado);
@@ -276,6 +276,19 @@ public class Code11 {
             }
         }
         return resultado;
+    }
+
+    private static int minValue(List arryValores) {
+        int cActual = 0;
+        int c = 0;
+        for (int i = 0; i < arryValores.toArray().length; i++) {
+            c = (Integer) arryValores.get(i);
+            if (c < cActual) {
+                cActual = c;
+            }
+        }
+        System.out.println("cActual " + cActual);
+        return cActual;
     }
 
 }

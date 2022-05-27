@@ -8,6 +8,7 @@ public class Code93 {
     // Codifica emprant Code93
     static String encode(String str) {
         String resultado = "";
+        str = "*" + str + "*";
         HashMap<String, String> map = new HashMap();
         map.put("0", "█   █ █  ");
         map.put("1", "█ █  █   ");
@@ -126,10 +127,10 @@ public class Code93 {
                     continue;
                 }
                 contador++;
-                if (k == 0 && contador == 21){
+                if (k == 0 && contador == 21) {
                     contador = 1;
                 }
-                if (k == 1 && contador == 16){
+                if (k == 1 && contador == 16) {
                     contador = 1;
                 }
                 newCaracter = contador * mapValues.get(c);
