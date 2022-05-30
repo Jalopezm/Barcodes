@@ -81,94 +81,63 @@ public class Code11 {
 
         String anchoAlto[] = sAnchoAlto.split("\s");
 
-        anchoNum = Integer.parseInt(anchoAlto[0]) * 3;
-        anchoNum += 3;
+        anchoNum = Integer.parseInt(anchoAlto[0]);
         altoNum = Integer.parseInt(anchoAlto[1]);
 
         String codeActual = "";
         String code = "";
-        String[] barCode = new String[anchoNum];
-        for (int i = pos; i < anchoNum; ) {
+        String[][] barcode3 = new String[anchoNum * altoNum][3];
+        for (int i = 0; i < anchoNum * altoNum; i++) {
             for (int j = 0; j < 3; j++) {
-                codeActual += numeros[i] + "/";
-                i++;
+                barcode3[i][j] = numeros[pos];
+                pos++;
             }
-            code = codeActual;
-            codeActual = "";
-            barCode[i - pos] = code;
+        }
+        String[][] barcode = new String[altoNum][anchoNum];
 
+        int saltoFila =0;
+        resultado = decode(fromNumbertoBarCode(barcode, anchoNum, altoNum,barcode3,saltoFila));
+        while(resultado ==null){
+            saltoFila+=10;
+            resultado = decode(fromNumbertoBarCode(barcode, anchoNum, altoNum,barcode3,saltoFila));
         }
 //        System.out.println("String" + Arrays.toString(barCode));
-        resultado = decode(fromNumbertoBarCode(barCode, anchoNum));
-        int anchoNumNuevo = 0;
-        int anchoNumProv = anchoNum;
-
-        while (resultado == null) {
-            int contador = 0;
-            System.out.println("Contador: " + contador);
-            codeActual = "";
-            code = "";
-            anchoNumNuevo += anchoNum;
-//            System.out.println("String" + Arrays.toString(barCode));
-            barCode = new String[anchoNum];
-
-            for (int i = anchoNumProv; i < anchoNumNuevo - 1; i++) {
-                for (int j = 0; j < 3; j++) {
-                    codeActual += numeros[i] + "/";
-                }
-                code = codeActual;
-                codeActual = "";
-                barCode[contador] = code;
-                contador++;
-            }
-            resultado = decode(fromNumbertoBarCode(barCode, anchoNum));
-            anchoNumProv = anchoNumNuevo;
-        }
         return resultado;
     }
 
-    private static String fromNumbertoBarCode(String[] barCode, int anchoNum) {
-        int suma = 0;
-        int contador = 0;
-        String numero = "";
-        for (int i = 0; i < anchoNum; i++) {
-            if (barCode[i] == null) {
-                int pos = 0;
-                continue;
-            }
-            for (int j = 0; j < anchoNum; j++) {
-                if (contador == 3) {
-                    contador = 0;
-                    break;
-                }
-                char c = barCode[i].charAt(j);
-                if (c != '/') {
-                    numero += c;
-                } else {
-                    int numeroC = Integer.parseInt(numero);
-                    suma += numeroC;
-                    contador++;
-                    numero = "";
-                }
+    private static String fromNumbertoBarCode(String[][] barCode, int anchoNum, int altoNum, String[][] barCode3 , int saltoFila) {
 
-            }
-            int media = suma / 3;
-            suma = 0;
-            if (media >= 100) {
-                barCode[i] = barCode[i].replaceAll("([0-9]+/)+", " ");
-            } else {
-                barCode[i] = barCode[i].replaceAll("([0-9]+/)+", "█");
+        int[][] barCodeInt = new int[altoNum][anchoNum];
+        int index = 0;
+        for (int i = 0; i < altoNum; i++) {
+            for (int j = 0; j < anchoNum; j++) {
+                int r = Integer.parseInt(barCode3[index][0]);
+                int g = Integer.parseInt(barCode3[index][1]);
+                int b = Integer.parseInt(barCode3[index][2]);
+                int RGB = (r + g + b) / 3;
+                barCodeInt[i][j] = RGB;
+                index++;
+
+                int numero = barCodeInt[i][j];
+
+                if (numero >= 100) {
+                    barCode[i][j] = " ";
+                } else {
+                    barCode[i][j] = "█";
+                }
             }
         }
         String code = "";
-        for (int i = 0; i < barCode.length; i++) {
-            String c = barCode[i];
-            if (c == null) {
-                continue;
+        for (int k = saltoFila; k < altoNum; k++) {
+            for (int l = 0; l < anchoNum; l++) {
+                String c = barCode[k][l];
+                if (c == null) {
+                    continue;
+                }
+                code += c;
             }
-            code += c;
+            break;
         }
-
         System.out.println(code);
         return code;
 
@@ -221,7 +190,8 @@ public class Code11 {
         return list;
     }
 
-    private static String calculoResultado(String s, String resultadoAux, String sAux, String resultado, HashMap<String, String> map) {
+    private static String calculoResultado(String s, String resultadoAux, String sAux, String
+            resultado, HashMap<String, String> map) {
         boolean False = true;
 
         for (int i = 0; i < s.length(); i++) {
