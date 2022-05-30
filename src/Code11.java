@@ -97,34 +97,54 @@ public class Code11 {
 
         int saltoFila = 0;
         resultado = decode(fromNumbertoBarCode(barcode, anchoNum, altoNum, barcode3, saltoFila));
+        int contador = 0;
         while (resultado == null) {
             saltoFila += 30;
             String barcodeString = fromNumbertoBarCode(barcode, anchoNum, altoNum, barcode3, saltoFila);
             resultado = decode(barcodeString);
-            if (resultado==null){
+            if (resultado == null) {
                 StringBuilder barcodeReverse = new StringBuilder(barcodeString);
                 resultado = decode(String.valueOf(barcodeReverse.reverse()));
             }
-//            if (){
-//                String verticalBarcodeString = verticalReading(altoNum,anchoNum,barcode3,barcode,saltoFila);
-//                resultado = decode(String.valueOf(verticalBarcodeString));
-//            }
-//            if (){
-//                String verticalBarcodeString = verticalReading(altoNum,anchoNum,barcode3,barcode,saltoFila);
-//                StringBuilder verticalReverse = new StringBuilder(verticalBarcodeString);
-//                resultado = decode(String.valueOf(verticalReverse.reverse()));
-//            }
+            System.out.println("Contador: "+contador);
+            contador+=30;
+            if (contador >= anchoNum){
+                break;
+            }
         }
+        saltoFila = 0;
+        while (resultado == null) {
+            saltoFila += 30;
+            if (resultado == null) {
+                String verticalBarcodeString = verticalReading(altoNum, anchoNum, barcode3, barcode, saltoFila);
+                resultado = decode(String.valueOf(verticalBarcodeString));
+            }
+
+            if (resultado == null) {
+                String verticalBarcodeString = verticalReading(altoNum, anchoNum, barcode3, barcode, saltoFila);
+                StringBuilder verticalReverse = new StringBuilder(verticalBarcodeString);
+                resultado = decode(String.valueOf(verticalReverse.reverse()));
+            }
+        }
+
+        saltoFila = 30;
+
 
         return resultado;
     }
 
-    private static String verticalReading(int altoNum, int anchoNum, String[][] barCode3, String[][] barCode,int saltoFila) {
+    private static String verticalReading(int altoNum, int anchoNum, String[][] barCode3, String[][] barCode, int saltoFila) {
         String code = "";
-        imageToBarCode(altoNum,anchoNum,barCode3,barCode);
+        imageToBarCode(altoNum, anchoNum, barCode3, barCode);
+//        for (int i = 0; i < anchoNum; i++) {
+//            for (int j = 0; j < altoNum; j++) {
+//                System.out.print(barCode[j][i]);
+//            }
+//            System.out.println();
+//        }
         for (int k = saltoFila; k < anchoNum; k++) {
             for (int l = 0; l < altoNum; l++) {
-                String c = barCode[k][l];
+                String c = barCode[l][k];
                 if (c == null) {
                     continue;
                 }
@@ -136,7 +156,7 @@ public class Code11 {
     }
 
     private static String fromNumbertoBarCode(String[][] barCode, int anchoNum, int altoNum, String[][] barCode3, int saltoFila) {
-        imageToBarCode(altoNum,anchoNum,barCode3,barCode);
+        imageToBarCode(altoNum, anchoNum, barCode3, barCode);
         String code = "";
         for (int k = saltoFila; k < altoNum; k++) {
             for (int l = 0; l < anchoNum; l++) {
@@ -269,13 +289,16 @@ public class Code11 {
                     sAux = sAux + c;
                 }
             }
-            if ((resultado.charAt(0) == '*' && resultado.charAt(resultado.length() - 1) == '*') && !resultado.contains("null")) {
-                False = false;
-            } else {
-                System.out.println(resultado);
-                System.out.println("resultado-aux.lenght " + resultadoAux.length());
-                resultado = "";
-                valorMaximo--;
+
+            if (resultado.length() > 0) {
+                if ((resultado.charAt(0) == '*' && resultado.charAt(resultado.length() - 1) == '*' && !resultado.contains("null"))) {
+                    False = false;
+                } else {
+                    System.out.println(resultado);
+                    System.out.println("resultado-aux.lenght " + resultadoAux.length());
+                    resultado = "";
+                    valorMaximo--;
+                }
             }
         }
         return resultado;
