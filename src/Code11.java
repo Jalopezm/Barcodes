@@ -95,18 +95,66 @@ public class Code11 {
         }
         String[][] barcode = new String[altoNum][anchoNum];
 
-        int saltoFila =0;
-        resultado = decode(fromNumbertoBarCode(barcode, anchoNum, altoNum,barcode3,saltoFila));
-        while(resultado ==null){
-            saltoFila+=10;
-            resultado = decode(fromNumbertoBarCode(barcode, anchoNum, altoNum,barcode3,saltoFila));
+        int saltoFila = 0;
+        resultado = decode(fromNumbertoBarCode(barcode, anchoNum, altoNum, barcode3, saltoFila));
+        while (resultado == null) {
+            saltoFila += 30;
+            String barcodeString = fromNumbertoBarCode(barcode, anchoNum, altoNum, barcode3, saltoFila);
+            resultado = decode(barcodeString);
+            if (resultado==null){
+                StringBuilder barcodeReverse = new StringBuilder(barcodeString);
+                resultado = decode(String.valueOf(barcodeReverse.reverse()));
+            }
+//            if (){
+//                String verticalBarcodeString = verticalReading(altoNum,anchoNum,barcode3,barcode,saltoFila);
+//                resultado = decode(String.valueOf(verticalBarcodeString));
+//            }
+//            if (){
+//                String verticalBarcodeString = verticalReading(altoNum,anchoNum,barcode3,barcode,saltoFila);
+//                StringBuilder verticalReverse = new StringBuilder(verticalBarcodeString);
+//                resultado = decode(String.valueOf(verticalReverse.reverse()));
+//            }
         }
-//        System.out.println("String" + Arrays.toString(barCode));
+
         return resultado;
     }
 
-    private static String fromNumbertoBarCode(String[][] barCode, int anchoNum, int altoNum, String[][] barCode3 , int saltoFila) {
+    private static String verticalReading(int altoNum, int anchoNum, String[][] barCode3, String[][] barCode,int saltoFila) {
+        String code = "";
+        imageToBarCode(altoNum,anchoNum,barCode3,barCode);
+        for (int k = saltoFila; k < anchoNum; k++) {
+            for (int l = 0; l < altoNum; l++) {
+                String c = barCode[k][l];
+                if (c == null) {
+                    continue;
+                }
+                code += c;
+            }
+            break;
+        }
+        return code;
+    }
 
+    private static String fromNumbertoBarCode(String[][] barCode, int anchoNum, int altoNum, String[][] barCode3, int saltoFila) {
+        imageToBarCode(altoNum,anchoNum,barCode3,barCode);
+        String code = "";
+        for (int k = saltoFila; k < altoNum; k++) {
+            for (int l = 0; l < anchoNum; l++) {
+                String c = barCode[k][l];
+                if (c == null) {
+                    continue;
+                }
+                code += c;
+            }
+            break;
+        }
+        System.out.println(code);
+
+        return code;
+
+    }
+
+    private static String[][] imageToBarCode(int altoNum, int anchoNum, String[][] barCode3, String[][] barCode) {
         int[][] barCodeInt = new int[altoNum][anchoNum];
         int index = 0;
         for (int i = 0; i < altoNum; i++) {
@@ -127,20 +175,7 @@ public class Code11 {
                 }
             }
         }
-        String code = "";
-        for (int k = saltoFila; k < altoNum; k++) {
-            for (int l = 0; l < anchoNum; l++) {
-                String c = barCode[k][l];
-                if (c == null) {
-                    continue;
-                }
-                code += c;
-            }
-            break;
-        }
-        System.out.println(code);
-        return code;
-
+        return barCode;
     }
 
     public static String generateImage(String s) {
@@ -190,10 +225,8 @@ public class Code11 {
         return list;
     }
 
-    private static String calculoResultado(String s, String resultadoAux, String sAux, String
-            resultado, HashMap<String, String> map) {
+    private static String calculoResultado(String s, String resultadoAux, String sAux, String resultado, HashMap<String, String> map) {
         boolean False = true;
-
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
             if (c != ' ' && c != '█') {
