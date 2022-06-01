@@ -1,13 +1,6 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 import java.util.*;
 
 public class Code11 {
-    public Code11() {
-    }
 
     static String encode(String s) {
         String resultado = "";
@@ -98,6 +91,7 @@ public class Code11 {
         int saltoFila = 0;
         resultado = decode(fromNumbertoBarCode(barcode, anchoNum, altoNum, barcode3, saltoFila));
         int contador = 0;
+
         while (resultado == null) {
             saltoFila += 30;
             String barcodeString = fromNumbertoBarCode(barcode, anchoNum, altoNum, barcode3, saltoFila);
@@ -106,12 +100,12 @@ public class Code11 {
                 StringBuilder barcodeReverse = new StringBuilder(barcodeString);
                 resultado = decode(String.valueOf(barcodeReverse.reverse()));
             }
-            System.out.println("Contador: "+contador);
-            contador+=30;
-            if (contador >= anchoNum){
+            contador += 30;
+            if (contador >= anchoNum) {
                 break;
             }
         }
+
         saltoFila = 0;
         while (resultado == null) {
             saltoFila += 30;
@@ -136,12 +130,7 @@ public class Code11 {
     private static String verticalReading(int altoNum, int anchoNum, String[][] barCode3, String[][] barCode, int saltoFila) {
         String code = "";
         imageToBarCode(altoNum, anchoNum, barCode3, barCode);
-//        for (int i = 0; i < anchoNum; i++) {
-//            for (int j = 0; j < altoNum; j++) {
-//                System.out.print(barCode[j][i]);
-//            }
-//            System.out.println();
-//        }
+
         for (int k = saltoFila; k < anchoNum; k++) {
             for (int l = 0; l < altoNum; l++) {
                 String c = barCode[l][k];
@@ -198,8 +187,65 @@ public class Code11 {
         return barCode;
     }
 
+    // Genera imatge a partir de codi de barres
+    // Alçada: 100px
+    // Marges: vertical 4px, horizontal 8px
     public static String generateImage(String s) {
-        return "";
+        String stringEncoded = Code11.encode(s);
+        int altoImagen = 108;
+        String resultado = "";
+        String resultadoAux = "";
+        int anchoImagen = 0;
+        int contadorBarras = 0;
+        int contadorSpacios = 0;
+        char c = ' ';
+        String margenSuperior = "255\n255\n255\n";
+        String margen = "255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n";
+        if (stringEncoded == null) {
+            return null;
+        }
+        for (int j = 0; j <= stringEncoded.length(); j++) {
+            if (j < stringEncoded.length()) {
+                c = stringEncoded.charAt(j);
+            }
+            if (c == ' ') {
+                contadorSpacios++;
+                if (contadorBarras > 0) {
+                    if (contadorBarras == 1) {
+                        resultadoAux += "0\n0\n0\n0\n0\n0\n0\n0\n0\n";
+                        anchoImagen += 3;
+                    } else {
+                        resultadoAux += "0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n";
+                        anchoImagen += 10;
+                    }
+                    contadorBarras = 0;
+                }
+            } else {
+                contadorBarras++;
+                if (contadorSpacios > 0) {
+                    if (contadorSpacios == 1) {
+                        resultadoAux += "255\n255\n255\n255\n255\n255\n255\n255\n255\n";
+                        anchoImagen += 3;
+                    } else {
+                        resultadoAux += "255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n";
+                        anchoImagen += 10;
+                    }
+                    contadorSpacios = 0;
+                }
+            }
+        }
+        resultadoAux += "0\n0\n0\n0\n0\n0\n0\n0\n0\n";
+        anchoImagen+=19;
+        resultadoAux = margen+resultadoAux+margen;
+        for (int i = 0; i < 100; i++) {
+            resultado+=resultadoAux;
+        }
+       String margenTop = "";
+        for (int i = 0; i < anchoImagen * 4; i++) {
+            margenTop+=margenSuperior;
+        }
+        String margenBotom = margenTop.substring(0,margenTop.length()-1);
+        return "P3\n" + anchoImagen + "\s" + altoImagen + "\n255\n" + margenTop+resultado+margenBotom;
     }
 
     private static int maxValue(List arryValores) {

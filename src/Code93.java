@@ -8,7 +8,7 @@ public class Code93 {
     // Codifica emprant Code93
     static String encode(String str) {
         String resultado = "";
-        str = "*" + str + "*";
+        str = "∇" + str + "∇";
         HashMap<String, String> map = new HashMap();
         map.put("0", "█   █ █  ");
         map.put("1", "█ █  █   ");
@@ -123,7 +123,7 @@ public class Code93 {
                     break;
                 }
                 String c = String.valueOf(resultadoAux.charAt(i));
-                if (c.equals("*")) {
+                if (c.equals("∇")) {
                     continue;
                 }
                 contador++;
@@ -141,11 +141,11 @@ public class Code93 {
 
             for (Map.Entry<String, Integer> entry : mapValues.entrySet()) {
                 if (entry.getValue() == caracter) {
-                    if (resultadoAux.charAt(resultadoAux.length() - 1) == '*') {
+                    if (resultadoAux.charAt(resultadoAux.length() - 1) == '∇') {
                         resultadoAux = resultadoAux.substring(0, resultadoAux.length() - 1);
                     }
                     resultadoAux += entry.getKey();
-                    resultadoAux += "*";
+                    resultadoAux += "∇";
                     break;
                 }
             }
@@ -154,9 +154,9 @@ public class Code93 {
         for (int i = 0; i < resultadoAux.length(); ++i) {
             String c = String.valueOf(resultadoAux.charAt(i));
             if (i == 0) {
-                map.put("*", "█ █ ████ ");//Apertura
+                map.put("∇", "█ █ ████ ");//Apertura
             } else {
-                map.put("*", "█ █ ████ █");//Cierre
+                map.put("∇", "█ █ ████ █");//Cierre
             }
             System.out.println(c + map.get(c));
             resultado += map.get(c);
