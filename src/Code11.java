@@ -3,7 +3,8 @@ import java.util.*;
 public class Code11 {
 
     static String encode(String s) {
-        String resultado = "";
+        String result = "";
+
         HashMap<Character, String> map = new HashMap();
         map.put('0', "█ █ ██ ");
         map.put('1', "██ █ ██ ");
@@ -20,120 +21,148 @@ public class Code11 {
 
         for (int i = 0; i < s.length(); ++i) {
             char c = s.charAt(i);
-            resultado = resultado + (String) map.get(c);
+            result = result + (String) map.get(c);
         }
-        resultado = resultado.substring(0, resultado.length() - 1);
-        return resultado;
+
+        result = result.substring(0, result.length() - 1);
+
+        return result;
     }
 
     static String decode(String s) {
-        String bar = "";
-        String space = "";
-        String resultado = "";
-        String sAux = "";
+        String result = "";
 
-        HashMap<String, String> map = new HashMap<String, String>();
-        map.put("00001", "0");
-        map.put("10001", "1");
-        map.put("01001", "2");
-        map.put("11000", "3");
-        map.put("00101", "4");
-        map.put("10100", "5");
-        map.put("01100", "6");
-        map.put("00011", "7");
-        map.put("10010", "8");
-        map.put("10000", "9");
-        map.put("00100", "-");
-        map.put("00110", "*");
+        HashMap<String, String> decodingMap = new HashMap<String, String>();
+        decodingMap.put("00001", "0");
+        decodingMap.put("10001", "1");
+        decodingMap.put("01001", "2");
+        decodingMap.put("11000", "3");
+        decodingMap.put("00101", "4");
+        decodingMap.put("10100", "5");
+        decodingMap.put("01100", "6");
+        decodingMap.put("00011", "7");
+        decodingMap.put("10010", "8");
+        decodingMap.put("10000", "9");
+        decodingMap.put("00100", "-");
+        decodingMap.put("00110", "*");
 
         s = s.trim();
 
-        String resultadoAux = s;
-
-
-        return calculoResultado(s, resultadoAux, sAux, resultado, map);
+        return calculateResult(s, result, decodingMap);
     }
 
     public static String decodeImage(String str) {
         String img = str;
-        String resultado = "";
+        String result = "";
+        int position = 0;
+        int numericWidth = 0;
+        int numericHeight = 0;
+
         img = img.replace("\r", "");
-        int pos = 0;
-        String[] numeros = img.split("\n");
-        int anchoNum = 0;
-        int altoNum = 0;
 
-        String sAnchoAlto;
-        if (!numeros[1].contains("#")) {
-            sAnchoAlto = numeros[1];
-            pos = 3;
+        String[] stringImage = img.split("\n");
+
+        String widthHeight;
+        if (!stringImage[1].contains("#")) {
+            widthHeight = stringImage[1];
+            position = 3;
         } else {
-            sAnchoAlto = numeros[2];
-            pos = 4;
+            widthHeight = stringImage[2];
+            position = 4;
         }
 
-        String anchoAlto[] = sAnchoAlto.split("\s");
+        String widthHeightArray[] = widthHeight.split("\s");
 
-        anchoNum = Integer.parseInt(anchoAlto[0]);
-        altoNum = Integer.parseInt(anchoAlto[1]);
+        numericWidth = Integer.parseInt(widthHeightArray[0]);
+        numericHeight = Integer.parseInt(widthHeightArray[1]);
 
-        String codeActual = "";
-        String code = "";
-        String[][] barcode3 = new String[anchoNum * altoNum][3];
-        for (int i = 0; i < anchoNum * altoNum; i++) {
+        String[][] threePackBarcode = new String[numericWidth * numericHeight][3];
+
+        for (int i = 0; i < numericWidth * numericHeight; i++) {
             for (int j = 0; j < 3; j++) {
-                barcode3[i][j] = numeros[pos];
-                pos++;
+                threePackBarcode[i][j] = stringImage[position];
+                position++;
             }
         }
-        String[][] barcode = new String[altoNum][anchoNum];
 
-        int saltoFila = 0;
-        resultado = decode(fromNumbertoBarCode(barcode, anchoNum, altoNum, barcode3, saltoFila));
-        int contador = 0;
+        String[][] doubleArrayBarcode = new String[numericHeight][numericWidth];
 
-        while (resultado == null) {
-            saltoFila += 30;
-            String barcodeString = fromNumbertoBarCode(barcode, anchoNum, altoNum, barcode3, saltoFila);
-            resultado = decode(barcodeString);
-            if (resultado == null) {
-                StringBuilder barcodeReverse = new StringBuilder(barcodeString);
-                resultado = decode(String.valueOf(barcodeReverse.reverse()));
+        int rowJump = 0;
+
+        result = decode(fromNumbertoBarCode(doubleArrayBarcode, numericWidth, numericHeight, threePackBarcode, rowJump));
+
+        int counter = 0;
+
+        result = horizontalTest(result, numericWidth, numericHeight, threePackBarcode, doubleArrayBarcode, rowJump, counter);
+
+        rowJump = 0;
+
+        result = verticalTest(result, numericWidth, numericHeight, threePackBarcode, doubleArrayBarcode, rowJump);
+
+        return result;
+    }
+
+    private static String verticalTest(String result, int numericWidth, int numericHeight, String[][] threePackBarcode, String[][] doubleArrayBarcode, int rowJump) {
+        while (result == null) {
+            rowJump += 30;
+            if (result == null) {
+                String verticalBarcodeString = verticalReading(numericHeight, numericWidth, threePackBarcode, doubleArrayBarcode, rowJump);
+                result = decode(String.valueOf(verticalBarcodeString));
             }
-            contador += 30;
-            if (contador >= anchoNum) {
+
+            if (result == null) {
+                String verticalBarcodeString = verticalReading(numericHeight, numericWidth, threePackBarcode, doubleArrayBarcode, rowJump);
+                StringBuilder verticalReverse = new StringBuilder(verticalBarcodeString);
+                result = decode(String.valueOf(verticalReverse.reverse()));
+            }
+        }
+        return result;
+    }
+
+    private static String horizontalTest(String result, int numericWidth, int numericHeight, String[][] threePackBarcode, String[][] doubleArrayBarcode, int rowJump, int counter) {
+        while (result == null) {
+            rowJump += 30;
+            String barcodeString = fromNumbertoBarCode(doubleArrayBarcode, numericWidth, numericHeight, threePackBarcode, rowJump);
+            result = decode(barcodeString);
+            if (result == null) {
+                StringBuilder barcodeReverse = new StringBuilder(barcodeString);
+                result = decode(String.valueOf(barcodeReverse.reverse()));
+            }
+            counter += 30;
+            if (counter >= numericWidth) {
                 break;
             }
         }
-
-        saltoFila = 0;
-        while (resultado == null) {
-            saltoFila += 30;
-            if (resultado == null) {
-                String verticalBarcodeString = verticalReading(altoNum, anchoNum, barcode3, barcode, saltoFila);
-                resultado = decode(String.valueOf(verticalBarcodeString));
-            }
-
-            if (resultado == null) {
-                String verticalBarcodeString = verticalReading(altoNum, anchoNum, barcode3, barcode, saltoFila);
-                StringBuilder verticalReverse = new StringBuilder(verticalBarcodeString);
-                resultado = decode(String.valueOf(verticalReverse.reverse()));
-            }
-        }
-
-        saltoFila = 30;
-
-
-        return resultado;
+        return result;
     }
 
-    private static String verticalReading(int altoNum, int anchoNum, String[][] barCode3, String[][] barCode, int saltoFila) {
-        String code = "";
-        imageToBarCode(altoNum, anchoNum, barCode3, barCode);
+    private static String verticalReading(int numericHeight, int numericWidth, String[][] threePackBarcode, String[][] doubleArrayBarcode, int rowJump) {
 
-        for (int k = saltoFila; k < anchoNum; k++) {
-            for (int l = 0; l < altoNum; l++) {
-                String c = barCode[l][k];
+        String code = "";
+        imageToBarCode(numericHeight, numericWidth, threePackBarcode, doubleArrayBarcode);
+
+        for (int k = rowJump; k < numericWidth; k++) {
+            for (int l = 0; l < numericHeight; l++) {
+                String c = doubleArrayBarcode[l][k];
+                if (c == null) {
+                    continue;
+                }
+                code += c;
+            }
+            break;
+        }
+
+        return code;
+    }
+
+    private static String fromNumbertoBarCode(String[][] doubleArrayBarcode, int numericWidth, int numericHeight, String[][] threePackBarcode, int rowJump) {
+
+        imageToBarCode(numericHeight, numericWidth, threePackBarcode, doubleArrayBarcode);
+        String code = "";
+
+        for (int k = rowJump; k < numericHeight; k++) {
+            for (int l = 0; l < numericWidth; l++) {
+                String c = doubleArrayBarcode[k][l];
                 if (c == null) {
                     continue;
                 }
@@ -144,130 +173,103 @@ public class Code11 {
         return code;
     }
 
-    private static String fromNumbertoBarCode(String[][] barCode, int anchoNum, int altoNum, String[][] barCode3, int saltoFila) {
-        imageToBarCode(altoNum, anchoNum, barCode3, barCode);
-        String code = "";
-        for (int k = saltoFila; k < altoNum; k++) {
-            for (int l = 0; l < anchoNum; l++) {
-                String c = barCode[k][l];
-                if (c == null) {
-                    continue;
-                }
-                code += c;
-            }
-            break;
-        }
-        System.out.println(code);
-
-        return code;
-
-    }
-
-    private static String[][] imageToBarCode(int altoNum, int anchoNum, String[][] barCode3, String[][] barCode) {
-        int[][] barCodeInt = new int[altoNum][anchoNum];
+    private static String[][] imageToBarCode(int numericHeight, int numericWidth, String[][] threePackBarcode, String[][] doubleArrayBarcode) {
+        int[][] numericBarcode = new int[numericHeight][numericWidth];
         int index = 0;
-        for (int i = 0; i < altoNum; i++) {
-            for (int j = 0; j < anchoNum; j++) {
-                int r = Integer.parseInt(barCode3[index][0]);
-                int g = Integer.parseInt(barCode3[index][1]);
-                int b = Integer.parseInt(barCode3[index][2]);
+
+        for (int i = 0; i < numericHeight; i++) {
+            for (int j = 0; j < numericWidth; j++) {
+                int r = Integer.parseInt(threePackBarcode[index][0]);
+                int g = Integer.parseInt(threePackBarcode[index][1]);
+                int b = Integer.parseInt(threePackBarcode[index][2]);
                 int RGB = (r + g + b) / 3;
-                barCodeInt[i][j] = RGB;
+                numericBarcode[i][j] = RGB;
                 index++;
 
-                int numero = barCodeInt[i][j];
+                int number = numericBarcode[i][j];
 
-                if (numero >= 100) {
-                    barCode[i][j] = " ";
+                if (number >= 100) {
+                    doubleArrayBarcode[i][j] = " ";
                 } else {
-                    barCode[i][j] = "█";
+                    doubleArrayBarcode[i][j] = "█";
                 }
             }
         }
-        return barCode;
+        return doubleArrayBarcode;
     }
 
-    // Genera imatge a partir de codi de barres
-    // Alçada: 100px
-    // Marges: vertical 4px, horizontal 8px
     public static String generateImage(String s) {
+
         String stringEncoded = Code11.encode(s);
-        int altoImagen = 108;
-        String resultado = "";
-        String resultadoAux = "";
-        int anchoImagen = 0;
-        int contadorBarras = 0;
-        int contadorSpacios = 0;
+        int imageHeight = 108;
+        String result = "";
+        String auxiliarResult = "";
+        int imageWidth = 0;
+        int barCounter = 0;
+        int spaceCounter = 0;
         char c = ' ';
-        String margenSuperior = "255\n255\n255\n";
-        String margen = "255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n";
+        String topBottomMargin = "255\n255\n255\n";
+        String lateralMargin = "255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n";
+
         if (stringEncoded == null) {
             return null;
         }
+
         for (int j = 0; j <= stringEncoded.length(); j++) {
             if (j < stringEncoded.length()) {
                 c = stringEncoded.charAt(j);
             }
             if (c == ' ') {
-                contadorSpacios++;
-                if (contadorBarras > 0) {
-                    if (contadorBarras == 1) {
-                        resultadoAux += "0\n0\n0\n0\n0\n0\n0\n0\n0\n";
-                        anchoImagen += 3;
+                spaceCounter++;
+                if (barCounter > 0) {
+                    if (barCounter == 1) {
+                        auxiliarResult += "0\n0\n0\n0\n0\n0\n0\n0\n0\n";
+                        imageWidth += 3;
                     } else {
-                        resultadoAux += "0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n";
-                        anchoImagen += 10;
+                        auxiliarResult += "0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n0\n";
+                        imageWidth += 10;
                     }
-                    contadorBarras = 0;
+                    barCounter = 0;
                 }
             } else {
-                contadorBarras++;
-                if (contadorSpacios > 0) {
-                    if (contadorSpacios == 1) {
-                        resultadoAux += "255\n255\n255\n255\n255\n255\n255\n255\n255\n";
-                        anchoImagen += 3;
+                barCounter++;
+                if (spaceCounter > 0) {
+                    if (spaceCounter == 1) {
+                        auxiliarResult += "255\n255\n255\n255\n255\n255\n255\n255\n255\n";
+                        imageWidth += 3;
                     } else {
-                        resultadoAux += "255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n";
-                        anchoImagen += 10;
+                        auxiliarResult += "255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n";
+                        imageWidth += 10;
                     }
-                    contadorSpacios = 0;
+                    spaceCounter = 0;
                 }
             }
         }
-        resultadoAux += "0\n0\n0\n0\n0\n0\n0\n0\n0\n";
-        anchoImagen+=19;
-        resultadoAux = margen+resultadoAux+margen;
+        auxiliarResult += "0\n0\n0\n0\n0\n0\n0\n0\n0\n";
+        imageWidth += 19;
+        auxiliarResult = lateralMargin + auxiliarResult + lateralMargin;
+
         for (int i = 0; i < 100; i++) {
-            resultado+=resultadoAux;
+            result += auxiliarResult;
         }
-       String margenTop = "";
-        for (int i = 0; i < anchoImagen * 4; i++) {
-            margenTop+=margenSuperior;
+        String topMargin = "";
+        for (int i = 0; i < imageWidth * 4; i++) {
+            topMargin += topBottomMargin;
         }
-        String margenBotom = margenTop.substring(0,margenTop.length()-1);
-        return "P3\n" + anchoImagen + "\s" + altoImagen + "\n255\n" + margenTop+resultado+margenBotom;
+        String bottomMargin = topMargin.substring(0, topMargin.length() - 1);
+
+        return "P3\n" + imageWidth + "\s" + imageHeight + "\n255\n" + topMargin + result + bottomMargin;
     }
 
-    private static int maxValue(List arryValores) {
-        int cActual = 0;
-        int c = 0;
-        for (int i = 0; i < arryValores.toArray().length; i++) {
-            c = (Integer) arryValores.get(i);
-            if (c > cActual) {
-                cActual = c;
-            }
-        }
-        System.out.println("cActual " + cActual);
-        return cActual;
-    }
-
-    private static List arrayValores(String s) {
+    private static List valueListGenerator(String s) {
         List<Integer> list = new ArrayList();
+
         char c = ' ';
-        int contadorBarras = 0;
-        int contadorSpacios = 0;
-        int mayor = 0;
+        int barCounter = 0;
+        int spaceCounter = 0;
+
         s = s + " ";
+
         for (int i = 0; i <= s.length(); i++) {
             if (i < s.length()) {
                 c = s.charAt(i);
@@ -275,92 +277,92 @@ public class Code11 {
                 return list;
             }
             if (c == ' ') {
-                contadorSpacios++;
-                if (contadorBarras > 0) {
-                    list.add(contadorBarras);
-                    contadorBarras = 0;
+                spaceCounter++;
+                if (barCounter > 0) {
+                    list.add(barCounter);
+                    barCounter = 0;
                 }
             } else {
-                contadorBarras++;
-                if (contadorSpacios > 0) {
-                    list.add(contadorSpacios);
-                    contadorSpacios = 0;
+                barCounter++;
+                if (spaceCounter > 0) {
+                    list.add(spaceCounter);
+                    spaceCounter = 0;
                 }
             }
         }
         return list;
     }
 
-    private static String calculoResultado(String s, String resultadoAux, String sAux, String resultado, HashMap<String, String> map) {
+    private static String calculateResult(String s, String result, HashMap<String, String> decodingMap) {
         boolean False = true;
+        String auxiliarString = "";
+
+        if (invalidCodes(s)) return null;
+
+        List valueList = valueListGenerator(s);
+
+        int maxValue = maxValue(valueList);
+
+        while (False) {
+            String auxiliarResult = "";
+
+            if (maxValue <= 1) {
+                return null;
+            }
+
+            for (int i = 0; i < valueList.toArray().length; i++) {
+                Integer c = (Integer) valueList.get(i);
+                if (c >= maxValue) {
+                    auxiliarResult += 1;
+                } else {
+                    auxiliarResult += 0;
+                }
+            }
+
+            for (int i = 0; i <= auxiliarResult.length(); i++) {
+                if (auxiliarString.length() == 5) {
+                    result = result + (String) decodingMap.get(auxiliarString);
+                    auxiliarString = "";
+                    continue;
+                }
+                if (i < auxiliarResult.length()) {
+                    char c = auxiliarResult.charAt(i);
+                    auxiliarString = auxiliarString + c;
+                }
+            }
+
+            if (result.length() > 0) {
+                if ((result.charAt(0) == '*' && result.charAt(result.length() - 1) == '*' && !result.contains("null"))) {
+                    False = false;
+                } else {
+                    result = "";
+                    maxValue--;
+                }
+            }
+        }
+        return result;
+    }
+
+    private static boolean invalidCodes(String s) {
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
             if (c != ' ' && c != '█') {
-                return null;
+                return true;
             }
         }
-
-        List lista = arrayValores(s);
-        System.out.println(s);
-        int valorMaximo = maxValue(lista);
-        int valorMinimo = minValue(lista);
-        while (False) {
-            resultadoAux = "";
-            System.out.println("Lista: " + arrayValores(s));
-
-            for (int i = 0; i < lista.toArray().length; i++) {
-                Integer c = (Integer) lista.get(i);
-                if (c >= valorMaximo) {
-                    resultadoAux += 1;
-                } else {
-                    resultadoAux += 0;
-                }
-            }
-            if (valorMaximo <= 1) {
-                return null;
-            }
-
-
-            System.out.println(resultadoAux);
-            for (int i = 0; i <= resultadoAux.length(); i++) {
-                if (sAux.length() == 5) {
-                    System.out.println("saux " + sAux);
-                    resultado = resultado + (String) map.get(sAux);
-                    System.out.println(resultado);
-                    sAux = "";
-                    continue;
-                }
-                if (i < resultadoAux.length()) {
-                    char c = resultadoAux.charAt(i);
-                    sAux = sAux + c;
-                }
-            }
-
-            if (resultado.length() > 0) {
-                if ((resultado.charAt(0) == '*' && resultado.charAt(resultado.length() - 1) == '*' && !resultado.contains("null"))) {
-                    False = false;
-                } else {
-                    System.out.println(resultado);
-                    System.out.println("resultado-aux.lenght " + resultadoAux.length());
-                    resultado = "";
-                    valorMaximo--;
-                }
-            }
-        }
-        return resultado;
+        return false;
     }
 
-    private static int minValue(List arryValores) {
+    private static int maxValue(List valueList) {
         int cActual = 0;
         int c = 0;
-        for (int i = 0; i < arryValores.toArray().length; i++) {
-            c = (Integer) arryValores.get(i);
-            if (c < cActual) {
+
+        for (int i = 0; i < valueList.toArray().length; i++) {
+            c = (Integer) valueList.get(i);
+            if (c > cActual) {
                 cActual = c;
             }
         }
-        System.out.println("cActual " + cActual);
         return cActual;
     }
-
 }
