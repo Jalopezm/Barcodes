@@ -248,16 +248,22 @@ public class Code11 {
     }
 
     public static String generateImage(String s) {
-
+        //Codificamos el String de la imagen
         String stringEncoded = Code11.encode(s);
+
+        //La imagen siempre mide 108px de alto
         int imageHeight = 108;
-        String result = "";
+        String barCode = "";
         String auxiliarResult = "";
         int imageWidth = 0;
         int barCounter = 0;
         int spaceCounter = 0;
         char c = ' ';
+
+        //Cada pixel en el margen superior o inferior son rgb --> 255 pq son blancos
         String topBottomMargin = "255\n255\n255\n";
+
+        //8px de Margen lateral 
         String lateralMargin = "255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n255\n";
 
         if (stringEncoded == null) {
@@ -265,9 +271,15 @@ public class Code11 {
         }
 
         for (int j = 0; j <= stringEncoded.length(); j++) {
+
             if (j < stringEncoded.length()) {
                 c = stringEncoded.charAt(j);
             }
+            
+            //En funcion del Caracter obtenido del String optaremos por una accion o otra
+            //Si el caracter es una barra incrementaremos el contador, hasta que se encuentre un espacio
+            //en cuyo caso incrementaremos el contador de espacoos y se reseteara a 0 el de barras,
+            // En funcion del tamaño del contador introduciremos en el String la consecucion de caracteres que pertoque.
             if (c == ' ') {
                 spaceCounter++;
                 if (barCounter > 0) {
@@ -294,20 +306,31 @@ public class Code11 {
                 }
             }
         }
+        //Añadimos la ultima barra
         auxiliarResult += "0\n0\n0\n0\n0\n0\n0\n0\n0\n";
+
+        //16px de margenes laterales mas 3px de la ultima barra
         imageWidth += 19;
+
+        //Añadimos los margenes laterales al String
         auxiliarResult = lateralMargin + auxiliarResult + lateralMargin;
 
         for (int i = 0; i < 100; i++) {
-            result += auxiliarResult;
+            //Generamos el String que contriene el Codigo de Barras
+            barCode += auxiliarResult;
         }
+        
         String topMargin = "";
+
         for (int i = 0; i < imageWidth * 4; i++) {
+            //Generamos el margen superior
             topMargin += topBottomMargin;
         }
+
+        //Eliminamos el ultimo salto de linea para el margen inferior
         String bottomMargin = topMargin.substring(0, topMargin.length() - 1);
 
-        return "P3\n" + imageWidth + "\s" + imageHeight + "\n255\n" + topMargin + result + bottomMargin;
+        return "P3\n" + imageWidth + "\s" + imageHeight + "\n255\n" + topMargin + barCode + bottomMargin;
     }
 
     private static List valueListGenerator(String s) {

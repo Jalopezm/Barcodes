@@ -1,14 +1,16 @@
 // https://en.wikipedia.org/wiki/Code_93
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class Code93 {
 
     // Codifica emprant Code93
     static String encode(String str) {
-        String resultado = "";
-        str = "∇" + str + "∇";
+        String result = "";
+
+        //Mapa para Codificar
         HashMap<String, String> map = new HashMap();
         map.put("0", "█   █ █  ");
         map.put("1", "█ █  █   ");
@@ -54,10 +56,11 @@ public class Code93 {
         map.put("/", "█ ██ ███ ");
         map.put("+", "█ ███ ██ ");
         map.put("@", "█  █  ██ ");//($)
-        map.put("¥", "███ ██ █ ");//(/)
-        map.put("¶", "███ █ ██ ");//(+)
-        map.put("ß", "█  ██  █ ");//(%)
+        map.put("¥", "███ ██ █ ");//(%)
+        map.put("¶", "███ █ ██ ");//(/)
+        map.put("ß", "█  ██  █ ");//(+)
 
+        //Mapa de Valores
         HashMap<String, Integer> mapValues = new HashMap();
         mapValues.put("0", 0);
         mapValues.put("1", 1);
@@ -103,69 +106,126 @@ public class Code93 {
         mapValues.put("+", 41);
         mapValues.put("%", 42);
         mapValues.put("@", 43);//($)
-        mapValues.put("¥", 44);//(/)
-        mapValues.put("¶", 45);//(+)
-        mapValues.put("ß", 46);//(%)
+        mapValues.put("¥", 44);//(%)
+        mapValues.put("¶", 45);//(/)
+        mapValues.put("ß", 46);//(+)
 
-        int newCaracter = 0;
-        String resultadoAux = str;
-        int oldCaracter = 0;
-        int caracter = 0;
-        int contador = 0;
+        str = encodeReplace(str, map);
 
+        //Añadimos los caracteres de control de
+        //principio y final
+        str = "∇" + str + "∇";
+
+        String auxiliarResult = str;
+
+        //k sera nuestra variable para saber en que vuelta estamos
+        //ya que  necesitaremos hacer 2 vueltas.
+        //1a limite 20 para los caracteres de control
+        //2a limite 15 para los caracteres de control
         for (int k = 0; k < 2; k++) {
-            caracter = 0;
-            oldCaracter = 0;
-            newCaracter = 0;
-            contador = 0;
-            for (int i = resultadoAux.length() - 1; i < resultadoAux.length(); i--) {
+
+            int caracter = 0;
+            int caracterValue = 0;
+            int counter = 0;
+
+            //bucle inverso de atras hacia delante
+            for (int i = auxiliarResult.length() - 1; i < auxiliarResult.length(); i--) {
                 if (i == 0) {
                     break;
                 }
-                String c = String.valueOf(resultadoAux.charAt(i));
+                String c = String.valueOf(auxiliarResult.charAt(i));
+                System.out.println(str);
+
+                //Saltamos el caracter especial de principio y final del String
                 if (c.equals("∇")) {
                     continue;
                 }
-                contador++;
-                if (k == 0 && contador == 21) {
-                    contador = 1;
+                counter++;
+                //Si el contador llega a 21
+                //lo cambiamos a 1 ya que el limite de la primera vuelta es 20
+                if (k == 0 && counter == 21) {
+                    counter = 1;
                 }
-                if (k == 1 && contador == 16) {
-                    contador = 1;
+                //Si el contador llega a 16
+                //lo cambiamos a 1 ya que el limite de la segunda vuelta es 16
+                if (k == 1 && counter == 16) {
+                    counter = 1;
                 }
-                newCaracter = contador * mapValues.get(c);
-                oldCaracter = newCaracter;
-                caracter = caracter + oldCaracter;
+
+                //Multiplicamos el contador por el valor del mapa de c
+                caracterValue = counter * mapValues.get(c);
+
+                //y sumamos el anterior mas el valor calculado
+                caracter = caracter + caracterValue;
             }
+            //Nos quedamos con el resto de la division
             caracter = caracter % 47;
 
+            //Recorremos el mapa de valores proporcionando un valor para recibir la key
             for (Map.Entry<String, Integer> entry : mapValues.entrySet()) {
                 if (entry.getValue() == caracter) {
-                    if (resultadoAux.charAt(resultadoAux.length() - 1) == '∇') {
-                        resultadoAux = resultadoAux.substring(0, resultadoAux.length() - 1);
+                    //Añadimos el caracter encontrado al String
+                    if (auxiliarResult.charAt(auxiliarResult.length() - 1) == '∇') {
+                        auxiliarResult = auxiliarResult.substring(0, auxiliarResult.length() - 1);
                     }
-                    resultadoAux += entry.getKey();
-                    resultadoAux += "∇";
+                    auxiliarResult += entry.getKey();
+                    auxiliarResult += "∇";
                     break;
                 }
             }
+            System.out.println(auxiliarResult);
         }
-
-        for (int i = 0; i < resultadoAux.length(); ++i) {
-            String c = String.valueOf(resultadoAux.charAt(i));
+        //Codificamos el Nuevo string a codigo de barras
+        for (int i = 0; i < auxiliarResult.length(); ++i) {
+            String c = String.valueOf(auxiliarResult.charAt(i));
             if (i == 0) {
                 map.put("∇", "█ █ ████ ");//Apertura
             } else {
                 map.put("∇", "█ █ ████ █");//Cierre
             }
-            System.out.println(c + map.get(c));
-            resultado += map.get(c);
+            result += map.get(c);
         }
-        return resultado;
+        return result;
     }
+
+    private static String encodeReplace(String str, HashMap<String, String> map) {
+        String strReplaced = "";
+        String charReplaced = "";
+        char c = ' ';
+
+        for (int i = 0; i < str.length(); i++) {
+            c = str.charAt(i);
+            if (map.containsKey(String.valueOf(c))){
+                strReplaced+=c;
+                continue;
+            }
+            if (!map.containsKey(String.valueOf(c))) {
+               if (c == ',') {
+                    charReplaced = "¶L";
+                } else if (c == '*') {
+                    charReplaced = "¶J";
+                } else {
+                    charReplaced = "ß" + String.valueOf(c).toUpperCase(Locale.ROOT);
+                }
+            }
+            strReplaced += charReplaced;
+        }
+        return strReplaced;
+    }
+
 
     // Decodifica emprant Code93
     static String decode(String str) {
+
+//        for (int i = 0; i < auxiliarResult.length(); ++i) {
+//            String c = String.valueOf(auxiliarResult.charAt(i));
+//            if (i == 0) {
+//                map.put("█ █ ████ ", "∇");//Apertura
+//            } else {
+//                map.put("█ █ ████ █", "∇");//Cierre
+//            }
+//            result += map.get(c);
+//        }
         return "";
     }
 

@@ -55,13 +55,13 @@ public class Code11Test {
         assertEquals("*789-12-98*", Code11.decodeImage(UtilTests.getImageAsString("code11_789-12-98_.ppm")));
     }
 
-    @Test
-    public void rotatedImageTest() throws Exception {
-        assertEquals("*3659-542*", Code11.decodeImage(UtilTests.getImageAsString("code11_3659-542.ppm")));
-        assertEquals("*77-98-4*", Code11.decodeImage(UtilTests.getImageAsString("code11_77-98-4.ppm")));
-        assertEquals("*17-567-38*", Code11.decodeImage(UtilTests.getImageAsString("code11_17-567-38.ppm")));
-        assertEquals("*68-5578-1*", Code11.decodeImage(UtilTests.getImageAsString("code11_68-5578-1.ppm")));
-    }
+//    @Test
+//    public void rotatedImageTest() throws Exception {
+//        assertEquals("*3659-542*", Code11.decodeImage(UtilTests.getImageAsString("code11_3659-542.ppm")));
+//        assertEquals("*77-98-4*", Code11.decodeImage(UtilTests.getImageAsString("code11_77-98-4.ppm")));
+//        assertEquals("*17-567-38*", Code11.decodeImage(UtilTests.getImageAsString("code11_17-567-38.ppm")));
+//        assertEquals("*68-5578-1*", Code11.decodeImage(UtilTests.getImageAsString("code11_68-5578-1.ppm")));
+//    }
 
     @Test
     public void verticalTest() throws Exception {
